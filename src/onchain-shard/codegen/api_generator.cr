@@ -10,21 +10,20 @@ class APIGenerator
       case value.raw
       when Hash
         
-        if value["get"]? != nil || value["post"]? != nil
+        is_post = true if value["post"]? != nil
         
-          tag_name = value["get"]? != nil ? value["get"]["tags"].as_a.first.to_s :
-            value["post"]["tags"].as_a.first.to_s
-        
-          if tags[tag_name]? == nil
-            tags[tag_name] = Array(YAML::Any).new
-          end
-          tags[tag_name] << (value["get"]? != nil ? value["get"] : value["post"])
-          
-          if tags_path[tag_name]? == nil
-            tags_path[tag_name] = Array(String).new
-          end
-          tags_path[tag_name] << key.to_s
+        tag_name = is_post ? value["post"]["tags"].as_a.first.to_s :
+          value["get"]["tags"].as_a.first.to_s
+      
+        if tags[tag_name]? == nil
+          tags[tag_name] = Array(YAML::Any).new
         end
+        tags[tag_name] << (is_post ? value["post"] : value["get"])
+        
+        if tags_path[tag_name]? == nil
+          tags_path[tag_name] = Array(String).new
+        end
+        tags_path[tag_name] << key.to_s + ":" + is_post.to_s
         
       else
         puts value.as_a.first
@@ -44,7 +43,11 @@ class APIGenerator
   
     clazz = "require \"http/client\"\n\nclass #{change_name}\n\n"
     
-    paths.each_with_index do |path, i|
+    paths.each_with_index do |the_path, i|
+    
+      path = the_path.split(":")[0]
+      is_post = the_path.split(":")[1] == "true" ? true : false
+    
       op_id = params[i]["operationId"].to_s
       clazz = clazz + "  # #{path} #{op_id}\n"
       method_name = op_id.gsub(" ", "_").downcase
@@ -67,41 +70,10 @@ class APIGenerator
       
       clazz = clazz + ")\n\n"
       
-      
-      clazz = clazz + "    response = HTTP::Client.get \"https://onchain.io/api"
-      path_we_need = path
-      index = path.index("{")
-      if index
-        path_we_need = path[0..index - 2]
-      end
-      clazz = clazz + path_we_need
-      params[i]["parameters"].as_a.each do |param|
-      
-        if param["in"].to_s == "path"
-        
-          clazz = clazz + "/\#{" + param["name"].to_s + "}"
-          
-        end
-        
-      end
-      
-      clazz = clazz + "/"
-      
-      first = true
-      params[i]["parameters"].as_a.each do |param|
-      
-        if param["in"].to_s == "query"
-        
-          if first
-            clazz = clazz + "?" 
-          else
-            clazz = clazz + "&"
-          end
-          first = false
-          clazz = clazz + param["name"].to_s + "=\#{" + param["name"].to_s + "}"
-          
-        end
-        
+      if is_post
+        clazz = clazz + generate_post_call(path, params[i])
+      else
+        clazz = clazz + generate_get_call(path, params[i])
       end
       
       clazz = clazz + "\"\n\n    raise \"Error with API\" if response.status_code != 200"
@@ -133,6 +105,90 @@ class APIGenerator
       File.open(file_name, "w") { |f| f << clazz }
     end
     
+  end
+  
+  def self.generate_post_call(path : String, paramaters : YAML::Any)
+  
+    clazz = ""
+    clazz = clazz + "    response = HTTP::Client.get \"https://onchain.io/api"
+    path_we_need = path
+    index = path.index("{")
+    if index
+      path_we_need = path[0..index - 2]
+    end
+    clazz = clazz + path_we_need
+    paramaters["parameters"].as_a.each do |param|
+    
+      if param["in"].to_s == "path"
+      
+        clazz = clazz + "/\#{" + param["name"].to_s + "}"
+        
+      end
+      
+    end
+    
+    clazz = clazz + "/"
+    
+    first = true
+    paramaters["parameters"].as_a.each do |param|
+    
+      if param["in"].to_s == "query"
+      
+        if first
+          clazz = clazz + "?" 
+        else
+          clazz = clazz + "&"
+        end
+        first = false
+        clazz = clazz + param["name"].to_s + "=\#{" + param["name"].to_s + "}"
+        
+      end
+      
+    end
+    
+    return clazz
+  end
+  
+  def self.generate_get_call(path : String, paramaters : YAML::Any)
+  
+    clazz = ""
+    clazz = clazz + "    response = HTTP::Client.get \"https://onchain.io/api"
+    path_we_need = path
+    index = path.index("{")
+    if index
+      path_we_need = path[0..index - 2]
+    end
+    clazz = clazz + path_we_need
+    paramaters["parameters"].as_a.each do |param|
+    
+      if param["in"].to_s == "path"
+      
+        clazz = clazz + "/\#{" + param["name"].to_s + "}"
+        
+      end
+      
+    end
+    
+    clazz = clazz + "/"
+    
+    first = true
+    paramaters["parameters"].as_a.each do |param|
+    
+      if param["in"].to_s == "query"
+      
+        if first
+          clazz = clazz + "?" 
+        else
+          clazz = clazz + "&"
+        end
+        first = false
+        clazz = clazz + param["name"].to_s + "=\#{" + param["name"].to_s + "}"
+        
+      end
+      
+    end
+    
+    return clazz
   end
   
   def self.ref_to_model(ref : String)
