@@ -241,6 +241,16 @@ components:
       properties:
         rates:
           $ref: '#/components/schemas/rate'
+          
+    send_status:
+      type: object
+      properties:
+        status_code:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: 3bcf74e3421148db08daf6f5787a698534046bff54b2af1b8252b9166f8f4749
     
 paths:
   /address/balance/{coin}/{address}:
@@ -277,7 +287,7 @@ paths:
       summary: Get Balance
       description: Returns the satoshi balance, usd balance and user viewable balance for an address. For ERC20 tokens you need to pass in the contract ID and the number of decimal places.
       responses:
-        '200':
+        default:
           description: Returns the balances
           content:
             application/json:
@@ -318,7 +328,7 @@ paths:
       summary: Get Balances
       description: Returns the satoshi balance, usd balance and user viewable balance for a set of addresses
       responses:
-        '200':
+        default:
           description: Returns the balances
           content:
             application/json:
@@ -359,7 +369,7 @@ paths:
       summary: Get History
       description: Returns the transaction history for an address or addresses.
       responses:
-        '200':
+        default:
           description: Returns the transaction history for an address or addresses
           content:
             application/json:
@@ -388,7 +398,7 @@ paths:
       summary: Get Unspent Outs
       description: Returns the unspent outputs for an address or addresses.
       responses:
-        '200':
+        default:
           description: Returns the unspent outputs for an address or addresses
           content:
             application/json:
@@ -452,7 +462,7 @@ paths:
       summary: Create Unsigned Transaction
       description: Create an unsigned transaction. OnChain returns the transaction for the specified coin in hex format along with a list of hashes that need to be signed. 
       responses:
-        '200':
+        default:
           description: The unsigned transaction in hex format and a list of hashes that need signatures.
           content:
             application/json:
@@ -487,13 +497,7 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: 3bcf74e3421148db08daf6f5787a698534046bff54b2af1b8252b9166f8f4749
+                $ref: "#/components/schemas/send_status"
                   
   /transaction/send_raw/{coin}:
     post:
@@ -522,13 +526,7 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: 3bcf74e3421148db08daf6f5787a698534046bff54b2af1b8252b9166f8f4749
+                $ref: "#/components/schemas/send_status"
   
 
                   
@@ -553,7 +551,7 @@ paths:
       summary: Create Unsigned Transaction
       description: Create an unsigned transaction. OnChain returns the transaction for the specified coin in hex format along with a list of hashes that need to be signed. 
       responses:
-        '200':
+        default:
           description: The unsigned transaction in hex format and a list of hashes that need signatures.
           content:
             application/json:
@@ -588,13 +586,8 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: 3bcf74e3421148db08daf6f5787a698534046bff54b2af1b8252b9166f8f4749                  
+                $ref: "#/components/schemas/send_status"
+                
   /ethereum/create/:
     post:
       tags:
@@ -637,7 +630,7 @@ paths:
       summary: Create Unsigned Transaction
       description: Create an unsigned transaction. OnChain returns the ethereum transaction in hex format along with a hash that would need to be signed. 
       responses:
-        '200':
+        default:
           description: The unsigned transaction in hex format and the hash to sign.
           content:
             application/json:
@@ -714,13 +707,7 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: 3bcf74e3421148db08daf6f5787a698534046bff54b2af1b8252b9166f8f4749
+                $ref: "#/components/schemas/send_status"
                     
   
   
@@ -781,7 +768,7 @@ paths:
       summary: Create Unsigned Transaction
       description: Create an unsigned transaction. OnChain returns the ethereum transaction in hex format along with a hash that would need to be signed. 
       responses:
-        '200':
+        default:
           description: The unsigned transaction in hex format and the hash to sign.
           content:
             application/json:
@@ -872,134 +859,4 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: 3bcf74e3421148db08daf6f5787a698534046bff54b2af1b8252b9166f8f4749
-  
-  /exchange/get_rates/{coins}:
-    get:
-      tags:
-        - Exchange
-      parameters:
-        - in: path
-          name: coins   # Note the name is the same as in the path
-          required: true
-          schema:
-            type: string
-          description: Comma separated list of coins
-          example: bitcoin,zcash
-      operationId: Get Rates
-      summary: Get rates.
-      description: Get current exchange rate for currencies.
-      responses:
-        default:
-          description: Send a transaction onto the network.
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties:
-                  type: string
-                example:
-                  bitcoin: 0.99
-                  bitcoin_cash: 0.1
-  
-  /exchange/verify_trade/:
-    get:
-      tags:
-        - Exchange
-      parameters:
-        - in: query
-          name: from   # Note the name is the same as in the path
-          required: true
-          schema:
-            $ref: '#/components/schemas/coin'
-          example: bitcoin
-        - in: query
-          name: to   # Note the name is the same as in the path
-          required: true
-          schema:
-            $ref: '#/components/schemas/coin'
-          example: bitcoin_gold
-        - in: query
-          name: amount   
-          required: true
-          schema:
-            type: integer
-          description: The amount to exchange.
-          example: 10000
-      operationId: Verify Trade
-      summary: Verify trade.
-      description: Can we make the requested trade?
-      responses:
-        default:
-          description: List of possible errors
-          content:
-            application/json:
-              schema:
-                properties:
-                  is_valid:
-                    type: boolean
-                    example: false
-                  errors:
-                    type: array
-                    items:
-                      type: string
-                      example: Send amout too low.
-  
-  /exchange/create_trade/:
-    get:
-      tags:
-        - Exchange
-      parameters:
-        - in: query
-          name: from   # Note the name is the same as in the path
-          required: true
-          schema:
-            $ref: '#/components/schemas/coin'
-          example: bitcoin
-        - in: query
-          name: to   # Note the name is the same as in the path
-          required: true
-          schema:
-            $ref: '#/components/schemas/coin'
-          example: bitcoin_gold
-        - in: query
-          name: amount   
-          required: true
-          schema:
-            type: integer
-          description: The amount to exchange.
-          example: 10000
-        - in: query
-          name: identifier   
-          required: true
-          schema:
-            type: string
-          description: Connect the history together.
-          example: asd324fdsg
-      operationId: Create Trade
-      summary: Create trade.
-      description: Create the trade and get a deposit address.
-      responses:
-        default:
-          description: List of possible errors
-          content:
-            application/json:
-              schema:
-                properties:
-                  deposit_address:
-                    type: string
-                    example: 1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX
-                  is_valid:
-                    type: boolean
-                    example: false
-                  errors:
-                    type: array
-                    items:
-                      type: string
-                      example: Send amout too low.
+                $ref: "#/components/schemas/send_status"
