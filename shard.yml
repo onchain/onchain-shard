@@ -1,0 +1,13 @@
+name: onchain-shard
+version: 0.1.0
+
+authors:
+  - John Doe <ian.purton+c9@gmail.com>
+
+targets:
+  onchain-shard:
+    main: src/onchain-shard.cr
+
+crystal: 0.25.1
+
+license: MIT
