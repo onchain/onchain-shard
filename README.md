@@ -12,7 +12,7 @@ TODO: Write usage instructions here
 
 ## Development
 
-TODO: Write development instructions here
+./sentry -w "./src/**/*.cr" -r "crystal" --run-args "src/onchain-shard.cr"
 
 ## Contributing
 

@@ -1,5 +1,8 @@
 /docs/
+/dev/
 /lib/
 /bin/
 /.shards/
 *.dwarf
+onchain-shard
+sentry
