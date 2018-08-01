@@ -4,5 +4,5 @@
 /bin/
 /.shards/
 *.dwarf
-onchain-shard
+/onchain-shard
 sentry
