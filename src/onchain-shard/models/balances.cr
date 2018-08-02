@@ -5,6 +5,6 @@ struct Balances
 
   JSON.mapping(
     totals: Balance,
-    addresses: String)
+    addresses: Array(AddrBalance))
 end
 

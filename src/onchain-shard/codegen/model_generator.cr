@@ -23,8 +23,18 @@ class ModelGenerator
     init_def = ""
     props.each do |key, value|
       if value["type"]? != nil
-        init_def = init_def +
-          "    #{key.to_s}: #{convert_type(value["type"].to_s)},\n" 
+      
+        the_type =value["type"].to_s
+        # Is it an array
+        if value["items"]? != nil
+          the_items = value["items"]["$ref"].to_s
+          init_def = init_def +
+            "    #{key.to_s}: #{convert_type(the_type, the_items)},\n" 
+        else
+          init_def = init_def +
+            "    #{key.to_s}: #{convert_type(the_type)},\n" 
+        end
+          
       elsif value["$ref"]? != nil
         ref = APIGenerator.ref_to_model(value["$ref"].to_s)
         init_def = init_def + "    #{key.to_s}: #{ref},\n" 
@@ -51,13 +61,15 @@ class ModelGenerator
     end
   end
   
-  def self.convert_type(type : String) : String
+  def self.convert_type(type : String, items : String = "") : String
     if type == "number"
       return "Float64"
     elsif type == "string"
       return "String"
     elsif type == "integer"
       return "UInt64"
+    elsif type == "array"
+      return "Array(" + APIGenerator.ref_to_model(items) + ")"
     end
     
     return "String"

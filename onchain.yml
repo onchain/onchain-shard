@@ -449,7 +449,7 @@ paths:
         - in: query
           name: fee_amount   
           schema:
-            type: string
+            type: integer
           description: The amount of fees to send.
           example: 10000
         - in: query

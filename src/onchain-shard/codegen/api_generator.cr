@@ -110,7 +110,7 @@ class APIGenerator
   def self.generate_post_call(path : String, paramaters : YAML::Any)
   
     clazz = ""
-    clazz = clazz + "    response = HTTP::Client.get \"https://onchain.io/api"
+    clazz = clazz + "    response = HTTP::Client.post \"https://onchain.io/api"
     path_we_need = path
     index = path.index("{")
     if index

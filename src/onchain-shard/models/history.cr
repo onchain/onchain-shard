@@ -5,6 +5,6 @@ struct History
 
   JSON.mapping(
     total_txs: UInt64,
-    txs: String)
+    txs: Array(Tx))
 end
 
