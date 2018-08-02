@@ -68,7 +68,10 @@ class APIGenerator
         
       end
       
-      clazz = clazz + ")\n\n"
+      model_name, is_array = return_type(params[i]["responses"])
+      
+      clazz = clazz + ") : #{model_name}"
+      clazz = clazz + "\n\n"
       
       if is_post
         clazz = clazz + generate_post_call(path, params[i])
@@ -77,15 +80,6 @@ class APIGenerator
       end
       
       clazz = clazz + "\"\n\n    raise \"Error with API\" if response.status_code != 200"
-      
-      array = false
-      if params[i]["responses"]["default"]["content"]["application/json"]["schema"]["type"]? != nil
-        array = true
-        model_name = params[i]["responses"]["default"]["content"]["application/json"]["schema"]["items"]["$ref"].to_s
-      else
-        model_name = params[i]["responses"]["default"]["content"]["application/json"]["schema"]["$ref"].to_s
-      end
-      model_name = ref_to_model(model_name)
       
       clazz = clazz + "\n\n    #{model_name.downcase} = #{model_name}.from_json response.body \n"
       clazz = clazz + "\n\n    return #{model_name.downcase}\n"
@@ -105,6 +99,20 @@ class APIGenerator
       File.open(file_name, "w") { |f| f << clazz }
     end
     
+  end
+  
+  def self.return_type(response : YAML::Any)
+  
+    array = false
+    if response["default"]["content"]["application/json"]["schema"]["type"]? != nil
+      array = true
+      model_name = response["default"]["content"]["application/json"]["schema"]["items"]["$ref"].to_s
+    else
+      model_name = response["default"]["content"]["application/json"]["schema"]["$ref"].to_s
+    end
+    model_name = ref_to_model(model_name)
+    
+    return model_name, array
   end
   
   def self.generate_post_call(path : String, paramaters : YAML::Any)

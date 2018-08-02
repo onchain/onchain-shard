@@ -3,7 +3,7 @@ require "http/client"
 class Address
 
   # /address/balance/{coin}/{address} Get Balance
-  def self.get_balance(coin, address : String, contract_id : String, decimal_places : UInt64)
+  def self.get_balance(coin, address : String, contract_id : String, decimal_places : UInt64) : Balance
 
     response = HTTP::Client.get "https://onchain.io/api/address/balance/#{coin}/#{address}/?contract_id=#{contract_id}&decimal_places=#{decimal_places}"
 
@@ -16,7 +16,7 @@ class Address
   end
 
   # /address/balances/{coin}/{addresses} Get Balances
-  def self.get_balances(coin, addresses : String, contract_id : String, decimal_places : UInt64)
+  def self.get_balances(coin, addresses : String, contract_id : String, decimal_places : UInt64) : Balances
 
     response = HTTP::Client.get "https://onchain.io/api/address/balances/#{coin}/#{addresses}/?contract_id=#{contract_id}&decimal_places=#{decimal_places}"
 
@@ -29,7 +29,7 @@ class Address
   end
 
   # /address/history/{coin}/{addresses} Get History
-  def self.get_history(coin, addresses : String, contract_id : String, decimal_places : UInt64)
+  def self.get_history(coin, addresses : String, contract_id : String, decimal_places : UInt64) : History
 
     response = HTTP::Client.get "https://onchain.io/api/address/history/#{coin}/#{addresses}/?contract_id=#{contract_id}&decimal_places=#{decimal_places}"
 
@@ -42,7 +42,7 @@ class Address
   end
 
   # /address/utxo/{coin}/{addresses} Get Unspent
-  def self.get_unspent(coin, addresses : String)
+  def self.get_unspent(coin, addresses : String) : Utxo
 
     response = HTTP::Client.get "https://onchain.io/api/address/utxo/#{coin}/#{addresses}/"
 

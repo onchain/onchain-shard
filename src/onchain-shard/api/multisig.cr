@@ -3,7 +3,7 @@ require "http/client"
 class Multisig
 
   # /multi_sig/create/{coin} Create
-  def self.create(coin)
+  def self.create(coin) : HashesToSign
 
     response = HTTP::Client.post "https://onchain.io/api/multi_sig/create/#{coin}/"
 
@@ -16,7 +16,7 @@ class Multisig
   end
 
   # /multi_sig/sign_and_send/{coin} Sign and send
-  def self.sign_and_send(coin)
+  def self.sign_and_send(coin) : SendStatus
 
     response = HTTP::Client.post "https://onchain.io/api/multi_sig/sign_and_send/#{coin}/"
 

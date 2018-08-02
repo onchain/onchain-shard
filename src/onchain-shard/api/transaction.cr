@@ -3,7 +3,7 @@ require "http/client"
 class Transaction
 
   # /transaction/create/{coin} Create
-  def self.create(coin, to : String, from : String, amount : UInt64, fee_address : String, fee_amount : UInt64, miners_fee : UInt64)
+  def self.create(coin, to : String, from : String, amount : UInt64, fee_address : String, fee_amount : UInt64, miners_fee : UInt64) : HashesToSign
 
     response = HTTP::Client.post "https://onchain.io/api/transaction/create/#{coin}/?to=#{to}&from=#{from}&amount=#{amount}&fee_address=#{fee_address}&fee_amount=#{fee_amount}&miners_fee=#{miners_fee}"
 
@@ -16,7 +16,7 @@ class Transaction
   end
 
   # /transaction/sign_and_send/{coin} Sign and send
-  def self.sign_and_send(coin)
+  def self.sign_and_send(coin) : SendStatus
 
     response = HTTP::Client.post "https://onchain.io/api/transaction/sign_and_send/#{coin}/"
 
@@ -29,7 +29,7 @@ class Transaction
   end
 
   # /transaction/send_raw/{coin} Send Raw
-  def self.send_raw(coin, rawtx : String)
+  def self.send_raw(coin, rawtx : String) : SendStatus
 
     response = HTTP::Client.post "https://onchain.io/api/transaction/send_raw/#{coin}/?rawtx=#{rawtx}"
 
