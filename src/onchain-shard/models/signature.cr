@@ -1,12 +1,24 @@
 require "big"
 require "json"
 
-struct Signature
-
-  JSON.mapping(
-    hash_to_sign: String,
-    signature: String,
-    public_key: String,
-    input_index: UInt64)
+module OnChain
+  module API
+    
+    struct Signature
+    
+      def initialize(
+        @hash_to_sign : String,
+        @signature : String,
+        @public_key : String,
+        @input_index : UInt64)
+      end
+    
+      JSON.mapping(
+        hash_to_sign: String,
+        signature: String,
+        public_key: String,
+        input_index: UInt64)
+      end
+    
+  end
 end
-

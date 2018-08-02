@@ -1,12 +1,24 @@
 require "big"
 require "json"
 
-struct Utxo
-
-  JSON.mapping(
-    amount: UInt64,
-    vout: UInt64,
-    txid: String,
-    script_pub_key: String)
+module OnChain
+  module API
+    
+    struct Utxo
+    
+      def initialize(
+        @amount : UInt64,
+        @vout : UInt64,
+        @txid : String,
+        @script_pub_key : String)
+      end
+    
+      JSON.mapping(
+        amount: UInt64,
+        vout: UInt64,
+        txid: String,
+        script_pub_key: String)
+      end
+    
+  end
 end
-

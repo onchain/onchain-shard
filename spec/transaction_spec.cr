@@ -1,6 +1,6 @@
 require "./spec_helper"
 
-describe Transaction do
+describe OnChain::API::Transaction do
 
   it "should create a testnet transaction" do
   
@@ -11,7 +11,7 @@ describe Transaction do
     
     fee_addr = "n28nbaep2LLs6amVjggZhfTwUzBWsrPfmq"
       
-    hashes_to_sign = Transaction.create(
+    hashes_to_sign = OnChain::API::Transaction.create(
       "testnet3",     # Coin
       dest_addr,      # To 
       pub_keys_hex,   # from 
@@ -23,6 +23,8 @@ describe Transaction do
     hashes_to_sign.tx.size.should be > 10
     
     hashes_to_sign.hashes.size.should eq 1 
+    
+    #signatures = Signature.new
   end
   
 end

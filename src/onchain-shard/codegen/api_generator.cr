@@ -41,7 +41,8 @@ class APIGenerator
     
     change_name = name.gsub(" API", "")
   
-    clazz = "require \"http/client\"\n\nclass #{change_name}\n\n"
+    clazz = "require \"http/client\"\n\nmodule OnChain\n  module API\n"
+    clazz = clazz + "    class #{change_name}\n\n"
     
     paths.each_with_index do |the_path, i|
     
@@ -49,10 +50,10 @@ class APIGenerator
       is_post = the_path.split(":")[1] == "true" ? true : false
     
       op_id = params[i]["operationId"].to_s
-      clazz = clazz + "  # #{path} #{op_id}\n"
+      clazz = clazz + "      # #{path} #{op_id}\n"
       method_name = op_id.gsub(" ", "_").downcase
       
-      clazz = clazz + "  def self.#{method_name}("
+      clazz = clazz + "      def self.#{method_name}("
       
       params[i]["parameters"].as_a.each do |param|
       
@@ -68,6 +69,12 @@ class APIGenerator
         
       end
       
+      # Add requestBody to parameters if we have one
+      body_type = get_request_body_type(params[i])
+      if body_type
+        clazz = clazz + ", #{body_type.downcase} : #{body_type}"
+      end
+      
       model_name, is_array = return_type(params[i]["responses"])
       
       clazz = clazz + ") : #{model_name}"
@@ -79,15 +86,17 @@ class APIGenerator
         clazz = clazz + generate_get_call(path, params[i])
       end
       
-      clazz = clazz + "\"\n\n    raise \"Error with API\" if response.status_code != 200"
+      clazz = clazz + "\n\n        raise \"Error with API\" if response.status_code != 200"
       
-      clazz = clazz + "\n\n    #{model_name.downcase} = #{model_name}.from_json response.body \n"
-      clazz = clazz + "\n\n    return #{model_name.downcase}\n"
+      clazz = clazz + "\n\n        #{model_name.downcase} = #{model_name}.from_json response.body \n"
+      clazz = clazz + "\n\n        return #{model_name.downcase}\n"
       
-      clazz = clazz + "  end\n\n"
+      clazz = clazz + "      end\n\n"
     end
     
-    clazz = clazz + "end"
+    clazz = clazz + "    end\n"
+    clazz = clazz + "  end\n"
+    clazz = clazz + "end\n"
     
     
     file_name = "src/onchain-shard/api/#{change_name.downcase}.cr"
@@ -99,6 +108,14 @@ class APIGenerator
       File.open(file_name, "w") { |f| f << clazz }
     end
     
+  end
+  
+  def self.get_request_body_type(request_body : YAML::Any)
+    if request_body["requestBody"]? != nil
+      model = request_body["requestBody"]["content"]["application/json"]["schema"]["$ref"]
+      return ref_to_model(model.to_s)
+    end
+    nil
   end
   
   def self.return_type(response : YAML::Any)
@@ -118,7 +135,14 @@ class APIGenerator
   def self.generate_post_call(path : String, paramaters : YAML::Any)
   
     clazz = ""
-    clazz = clazz + "    response = HTTP::Client.post \"https://onchain.io/api"
+    
+    # Add requestBody to body
+    body_type = get_request_body_type(paramaters)
+    if body_type
+      clazz = clazz + "        body = #{body_type.downcase}.to_json\n\n"
+    end
+  
+    clazz = clazz + "        response = HTTP::Client.post \"https://onchain.io/api"
     path_we_need = path
     index = path.index("{")
     if index
@@ -152,6 +176,12 @@ class APIGenerator
         
       end
       
+    end
+    
+    clazz = clazz + "\""
+    
+    if body_type
+      clazz = clazz + ", body"
     end
     
     return clazz
@@ -160,7 +190,7 @@ class APIGenerator
   def self.generate_get_call(path : String, paramaters : YAML::Any)
   
     clazz = ""
-    clazz = clazz + "    response = HTTP::Client.get \"https://onchain.io/api"
+    clazz = clazz + "        response = HTTP::Client.get \"https://onchain.io/api"
     path_we_need = path
     index = path.index("{")
     if index
@@ -195,6 +225,8 @@ class APIGenerator
       end
       
     end
+    
+    clazz = clazz + "\""
     
     return clazz
   end

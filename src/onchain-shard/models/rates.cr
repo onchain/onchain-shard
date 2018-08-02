@@ -1,9 +1,18 @@
 require "big"
 require "json"
 
-struct Rates
-
-  JSON.mapping(
-    rates: Rate)
+module OnChain
+  module API
+    
+    struct Rates
+    
+      def initialize(
+        @rates : Rate)
+      end
+    
+      JSON.mapping(
+        rates: Rate)
+      end
+    
+  end
 end
-

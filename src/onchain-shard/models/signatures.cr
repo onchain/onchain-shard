@@ -1,10 +1,20 @@
 require "big"
 require "json"
 
-struct Signatures
-
-  JSON.mapping(
-    tx: String,
-    signatures: Signature)
+module OnChain
+  module API
+    
+    struct Signatures
+    
+      def initialize(
+        @tx : String,
+        @signatures : Signature)
+      end
+    
+      JSON.mapping(
+        tx: String,
+        signatures: Signature)
+      end
+    
+  end
 end
-

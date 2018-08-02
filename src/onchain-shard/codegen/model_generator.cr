@@ -29,15 +29,15 @@ class ModelGenerator
         if value["items"]? != nil
           the_items = value["items"]["$ref"].to_s
           init_def = init_def +
-            "    #{key.to_s}: #{convert_type(the_type, the_items)},\n" 
+            "        @#{key.to_s} : #{convert_type(the_type, the_items)},\n" 
         else
           init_def = init_def +
-            "    #{key.to_s}: #{convert_type(the_type)},\n" 
+            "        @#{key.to_s} : #{convert_type(the_type)},\n" 
         end
           
       elsif value["$ref"]? != nil
         ref = APIGenerator.ref_to_model(value["$ref"].to_s)
-        init_def = init_def + "    #{key.to_s}: #{ref},\n" 
+        init_def = init_def + "        @#{key.to_s} : #{ref},\n" 
       end
     end
     init_def = init_def[0..init_def.size - 3].to_s
@@ -46,12 +46,21 @@ class ModelGenerator
     require "big"
     require "json"
     
-    struct #{name.camelcase}
-    
-      JSON.mapping(
+    module OnChain
+      module API
+        
+        struct #{name.camelcase}
+        
+          def initialize(
     #{init_def})
+          end
+        
+          JSON.mapping(
+    #{init_def.gsub("@", "").gsub(" :", ":")})
+          end
+        
+      end
     end
-    
     CLASS
     )
     
