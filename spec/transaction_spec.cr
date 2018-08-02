@@ -11,7 +11,7 @@ describe Transaction do
     
     fee_addr = "n28nbaep2LLs6amVjggZhfTwUzBWsrPfmq"
       
-    resp = Transaction.create(
+    hashes_to_sign = Transaction.create(
       "testnet3",     # Coin
       dest_addr,      # To 
       pub_keys_hex,   # from 
@@ -20,7 +20,9 @@ describe Transaction do
       400000.to_u64,  # fee_amount
       40000.to_u64)   # miners_fee 
     
-    puts resp  
+    hashes_to_sign.tx.size.should be > 10
+    
+    hashes_to_sign.hashes.size.should eq 1 
   end
   
 end
