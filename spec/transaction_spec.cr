@@ -24,7 +24,9 @@ describe OnChain::API::Transaction do
     
     hashes_to_sign.hashes.size.should eq 1 
     
-    #signatures = Signature.new
+    sigs = Array(OnChain::API::Signature).new
+    
+    signatures = OnChain::API::Signatures.new(hashes_to_sign.tx, sigs)
   end
   
 end

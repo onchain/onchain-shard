@@ -8,12 +8,12 @@ module OnChain
     
       def initialize(
         @tx : String,
-        @signatures : Signature)
+        @signatures : Array(Signature))
       end
     
       JSON.mapping(
         tx: String,
-        signatures: Signature)
+        signatures: Array(Signature))
       end
     
   end
