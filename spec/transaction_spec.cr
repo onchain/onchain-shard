@@ -26,7 +26,16 @@ describe OnChain::API::Transaction do
     
     sigs = Array(OnChain::API::Signature).new
     
+    sigs << OnChain::API::Signature.new(hashes_to_sign.hashes[0].hash_to_sign, 
+      "This won't work",
+      hashes_to_sign.hashes[0].public_key,
+      hashes_to_sign.hashes[0].input_index)
+    
     signatures = OnChain::API::Signatures.new(hashes_to_sign.tx, sigs)
+    
+    result = OnChain::API::Transaction.sign_and_send("testnet3", signatures)
+    
+    puts result
   end
   
 end

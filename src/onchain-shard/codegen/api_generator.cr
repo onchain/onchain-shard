@@ -181,7 +181,7 @@ class APIGenerator
     clazz = clazz + "\""
     
     if body_type
-      clazz = clazz + ", body"
+      clazz = clazz + ", body: body"
     end
     
     return clazz

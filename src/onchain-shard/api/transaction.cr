@@ -22,7 +22,7 @@ module OnChain
 
         body = signatures.to_json
 
-        response = HTTP::Client.post "https://onchain.io/api/transaction/sign_and_send/#{coin}/", body
+        response = HTTP::Client.post "https://onchain.io/api/transaction/sign_and_send/#{coin}/", body: body
 
         raise "Error with API" if response.status_code != 200
 
