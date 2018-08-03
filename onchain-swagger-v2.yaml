@@ -1,0 +1,790 @@
+swagger: '2.0'
+info:
+  title: ONCHAIN.IO API overview
+  version: v2
+host: onchain.io
+basePath: /api
+schemes:
+  - https
+paths:
+  '/address/balance/{coin}/{address}':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - description: The name of the coin i.e. bitcoin
+          in: path
+          name: coin
+          required: true
+          type: string
+          x-example: testnet3
+        - description: The public address to lookup
+          in: path
+          name: address
+          required: true
+          type: string
+        - description: The contract ID of the ERC20 token.
+          in: query
+          name: contract_id
+          type: string
+          x-example: 6.058968844090876e+47
+        - description: The number of decimal places for this contract.
+          in: query
+          name: decimal_places
+          type: integer
+          x-example: 18
+      responses:
+        default:
+          description: Returns the balances
+          schema:
+            $ref: '#/definitions/balance'
+      tags:
+        - Address API
+      description: >-
+        Returns the satoshi balance, usd balance and user viewable balance for
+        an address. For ERC20 tokens you need to pass in the contract ID and the
+        number of decimal places.
+      operationId: Get Balance
+      summary: Get Balance
+  '/address/balances/{coin}/{addresses}':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - description: The name of the coin i.e. bitcoin
+          in: path
+          name: coin
+          required: true
+          type: string
+          x-example: testnet3
+        - description: A comma seperated list of public addresses
+          in: path
+          name: addresses
+          required: true
+          type: string
+        - description: The contract ID of the ERC20 token.
+          in: query
+          name: contract_id
+          type: string
+          x-example: 6.058968844090876e+47
+        - description: The number of decimal places for this contract.
+          in: query
+          name: decimal_places
+          type: integer
+          x-example: 18
+      responses:
+        default:
+          description: Returns the balances
+          schema:
+            $ref: '#/definitions/balances'
+      tags:
+        - Address API
+      description: >-
+        Returns the satoshi balance, usd balance and user viewable balance for a
+        set of addresses
+      operationId: Get Balances
+      summary: Get Balances
+  '/address/history/{coin}/{addresses}':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - description: The name of the coin i.e. bitcoin
+          in: path
+          name: coin
+          required: true
+          type: string
+          x-example: testnet3
+        - description: A comma seperated list of public addresses
+          in: path
+          name: addresses
+          required: true
+          type: string
+        - description: The contract ID of the ERC20 token.
+          in: query
+          name: contract_id
+          type: string
+          x-example: 6.058968844090876e+47
+        - description: The number of decimal places for this contract.
+          in: query
+          name: decimal_places
+          type: integer
+          x-example: 18
+      responses:
+        default:
+          description: Returns the transaction history for an address or addresses
+          schema:
+            $ref: '#/definitions/history'
+      tags:
+        - Address API
+      description: Returns the transaction history for an address or addresses.
+      operationId: Get History
+      summary: Get History
+  '/address/utxo/{coin}/{addresses}':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - description: The name of the coin i.e. bitcoin
+          in: path
+          name: coin
+          required: true
+          type: string
+          x-example: testnet3
+        - description: A comma seperated list of public addresses
+          in: path
+          name: addresses
+          required: true
+          type: string
+      responses:
+        default:
+          description: Returns the unspent outputs for an address or addresses
+          schema:
+            items:
+              $ref: '#/definitions/utxo'
+            type: array
+      tags:
+        - Address API
+      description: Returns the unspent outputs for an address or addresses.
+      operationId: Get Unspent
+      summary: Get Unspent Outs
+  /erc20/create/:
+    post:
+      produces:
+        - application/json
+      parameters:
+        - description: The address to send Ether to.
+          in: query
+          name: to
+          required: true
+          type: string
+          x-example: 2.5329069089123447e+76
+        - description: The addresses we are sending ether from.
+          in: query
+          name: from
+          required: true
+          type: string
+          x-example: 2.5329069089123447e+76
+        - description: The amount we wish to send in GWEI.
+          in: query
+          name: amount
+          required: true
+          type: integer
+          x-example: 80000
+        - description: The contract ID of the ERC20 token.
+          in: query
+          name: contract_id
+          required: true
+          type: string
+          x-example: 6.058968844090876e+47
+        - description: The number of decimal places for this contract.
+          in: query
+          name: decimal_places
+          required: true
+          type: integer
+          x-example: 18
+        - description: The gas price to pay.
+          in: query
+          name: gas_price
+          type: integer
+          x-example: 10000
+        - description: The gas limit to use.
+          in: query
+          name: gas_limit
+          type: integer
+          x-example: 10000
+      responses:
+        default:
+          description: The unsigned transaction in hex format and the hash to sign.
+          schema:
+            $ref: '#/definitions/ethereum_to_sign'
+      tags:
+        - ERC20
+      description: >-
+        Create an unsigned transaction. OnChain returns the ethereum transaction
+        in hex format along with a hash that would need to be signed.
+      operationId: Create
+      summary: Create Unsigned Transaction
+  /erc20/sign_and_send/:
+    post:
+      produces:
+        - application/json
+      parameters:
+        - description: The address to send Ether to.
+          in: query
+          name: to
+          required: true
+          type: string
+          x-example: 2.5329069089123447e+76
+        - description: The addresses we are sending ether from.
+          in: query
+          name: from
+          required: true
+          type: string
+          x-example: 2.5329069089123447e+76
+        - description: The amount we wish to send in GWEI.
+          in: query
+          name: amount
+          required: true
+          type: integer
+          x-example: 80000
+        - description: The contract ID of the ERC20 token.
+          in: query
+          name: contract_id
+          required: true
+          type: string
+          x-example: 6.058968844090876e+47
+        - description: The number of decimal places for this contract.
+          in: query
+          name: decimal_places
+          required: true
+          type: integer
+          x-example: 18
+        - description: The signed r value.
+          in: query
+          name: r
+          required: true
+          type: string
+          x-example: 37ffbebc90cd580b516d99cc53050e93a6cd5f
+        - description: The signed r value.
+          in: query
+          name: s
+          required: true
+          type: string
+          x-example: 37ffbebc90cd580b516d99cc53050e93a6cd5f
+        - description: The signed r value.
+          in: query
+          name: v
+          required: true
+          type: string
+          x-example: 52
+        - description: The gas price to pay.
+          in: query
+          name: gas_price
+          type: integer
+          x-example: 10000
+        - description: The gas limit to use.
+          in: query
+          name: gas_limit
+          type: integer
+          x-example: 10000
+      responses:
+        default:
+          description: Send a transaction onto the network.
+          schema:
+            $ref: '#/definitions/send_status'
+      tags:
+        - ERC20
+      description: Sign and send transaction onto the Ethereum network.
+      operationId: Sign and send
+      summary: Sign and send transaction.
+  /ethereum/create/:
+    post:
+      produces:
+        - application/json
+      parameters:
+        - description: The address to send Ether to.
+          in: query
+          name: to
+          required: true
+          type: string
+          x-example: 2.5329069089123447e+76
+        - description: The addresses we are sending ether from.
+          in: query
+          name: from
+          required: true
+          type: string
+          x-example: 2.5329069089123447e+76
+        - description: The amount we wish to send in GWEI.
+          in: query
+          name: amount
+          required: true
+          type: integer
+          x-example: 80000
+        - description: The gas price to pay.
+          in: query
+          name: gas_price
+          type: integer
+          x-example: 10000
+        - description: The gas limit to use.
+          in: query
+          name: gas_limit
+          type: integer
+          x-example: 10000
+      responses:
+        default:
+          description: The unsigned transaction in hex format and the hash to sign.
+          schema:
+            $ref: '#/definitions/ethereum_to_sign'
+      tags:
+        - Ethereum API
+      description: >-
+        Create an unsigned transaction. OnChain returns the ethereum transaction
+        in hex format along with a hash that would need to be signed.
+      operationId: Create
+      summary: Create Unsigned Transaction
+  /ethereum/sign_and_send/:
+    post:
+      produces:
+        - application/json
+      parameters:
+        - description: The address to send Ether to.
+          in: query
+          name: to
+          required: true
+          type: string
+          x-example: 2.5329069089123447e+76
+        - description: The addresses we are sending ether from.
+          in: query
+          name: from
+          required: true
+          type: string
+          x-example: 2.5329069089123447e+76
+        - description: The amount we wish to send in GWEI.
+          in: query
+          name: amount
+          required: true
+          type: integer
+          x-example: 80000
+        - description: The signed r value.
+          in: query
+          name: r
+          required: true
+          type: string
+          x-example: 37ffbebc90cd580b516d99cc53050e93a6cd5f
+        - description: The signed r value.
+          in: query
+          name: s
+          required: true
+          type: string
+          x-example: 37ffbebc90cd580b516d99cc53050e93a6cd5f
+        - description: The signed r value.
+          in: query
+          name: v
+          required: true
+          type: string
+          x-example: 52
+        - description: The gas price to pay.
+          in: query
+          name: gas_price
+          type: integer
+          x-example: 10000
+        - description: The gas limit to use.
+          in: query
+          name: gas_limit
+          type: integer
+          x-example: 10000
+      responses:
+        default:
+          description: Send a transaction onto the network.
+          schema:
+            $ref: '#/definitions/send_status'
+      tags:
+        - Ethereum API
+      description: Sign and send transaction onto the Ethereum network.
+      operationId: Sign and send
+      summary: Sign and send transaction.
+  '/multi_sig/create/{coin}':
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: coin
+          required: true
+          type: string
+          x-example: testnet3
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/multi_sig_payment'
+      responses:
+        default:
+          description: >-
+            The unsigned transaction in hex format and a list of hashes that
+            need signatures.
+          schema:
+            $ref: '#/definitions/hashes_to_sign'
+      tags:
+        - Multisig
+      description: >-
+        Create an unsigned transaction. OnChain returns the transaction for the
+        specified coin in hex format along with a list of hashes that need to be
+        signed.
+      operationId: Create
+      summary: Create Unsigned Transaction
+  '/multi_sig/sign_and_send/{coin}':
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - description: The name of the coin i.e. bitcoin
+          in: path
+          name: coin
+          required: true
+          type: string
+          x-example: testnet3
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/signatures'
+      responses:
+        default:
+          description: Send a transaction onto the network.
+          schema:
+            $ref: '#/definitions/send_status'
+      tags:
+        - Multisig
+      description: Sign and send transaction onto the network.
+      operationId: Sign and send
+      summary: Sign and Send a Transaction
+  '/transaction/create/{coin}':
+    post:
+      produces:
+        - application/json
+      parameters:
+        - description: The name of the coin i.e. bitcoin
+          in: path
+          name: coin
+          required: true
+          type: string
+          x-example: testnet3
+        - description: The address to send coins to.
+          in: query
+          name: to
+          required: true
+          type: string
+          x-example: 2MttUxQo4jjyVtb5Br49WUEy3LZoZuwtba5
+        - description: >-
+            The addresses we are sending coins from. OnChain will fetch unspent
+            outs from each address in order until the amount to send is met. We
+            use the public hex key of the address not the hash.
+          in: query
+          name: from
+          required: true
+          type: string
+          x-example: 036f3972643ab052f9f77cbaf67f0e517180ac488453bde8cb27e9e3e1d6847d49
+        - description: The amount we wish to send.
+          in: query
+          name: amount
+          required: true
+          type: integer
+          x-example: 80000
+        - description: An address to send fees to.
+          in: query
+          name: fee_address
+          type: string
+          x-example: 2MttUxQo4jjyVtb5Br49WUEy3LZoZuwtba5
+        - description: The amount of fees to send.
+          in: query
+          name: fee_amount
+          type: integer
+          x-example: 10000
+        - description: The amount to send to the miners.
+          in: query
+          name: miners_fee
+          type: integer
+          x-example: 10000
+      responses:
+        default:
+          description: >-
+            The unsigned transaction in hex format and a list of hashes that
+            need signatures.
+          schema:
+            $ref: '#/definitions/hashes_to_sign'
+      tags:
+        - Transaction API
+      description: >-
+        Create an unsigned transaction. OnChain returns the transaction for the
+        specified coin in hex format along with a list of hashes that need to be
+        signed.
+      operationId: Create
+      summary: Create Unsigned Transaction
+  '/transaction/send_raw/{coin}':
+    post:
+      produces:
+        - application/json
+      parameters:
+        - description: The name of the coin i.e. bitcoin
+          in: path
+          name: coin
+          required: true
+          type: string
+          x-example: testnet3
+        - description: The raw signed transaction as a hex string
+          in: query
+          name: rawtx
+          required: true
+          type: string
+      responses:
+        default:
+          description: Send a transaction onto the network.
+          schema:
+            $ref: '#/definitions/send_status'
+      tags:
+        - Transaction API
+      description: Send a transaction onto the network.
+      operationId: Send Raw
+      summary: Send Raw Transaction
+  '/transaction/sign_and_send/{coin}':
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - description: The name of the coin i.e. bitcoin
+          in: path
+          name: coin
+          required: true
+          type: string
+          x-example: testnet3
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/signatures'
+      responses:
+        default:
+          description: Send a transaction onto the network.
+          schema:
+            $ref: '#/definitions/send_status'
+      tags:
+        - Transaction API
+      description: Sign and send transaction onto the network.
+      operationId: Sign and send
+      summary: Sign and Send a Transaction
+definitions:
+  addr_balance:
+    properties:
+      address:
+        example: 1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY
+        type: string
+      balance:
+        example: 27018060
+        type: integer
+      human_balance:
+        example: 0.2701806
+        type: number
+      human_unconfirmed_balance:
+        example: 0.2701806
+        type: number
+      unconfirmed_balance:
+        example: 27018060
+        type: integer
+      usd_balance:
+        example: 120.34
+        type: integer
+    type: object
+  balance:
+    properties:
+      balance:
+        example: 27018060
+        type: integer
+      human_balance:
+        example: 0.2701806
+        type: number
+      human_unconfirmed_balance:
+        example: 0.2701806
+        type: number
+      unconfirmed_balance:
+        example: 27018060
+        type: integer
+      usd_balance:
+        example: 120.34
+        type: number
+    type: object
+  balances:
+    properties:
+      addresses:
+        items:
+          $ref: '#/definitions/addr_balance'
+        type: array
+      totals:
+        $ref: '#/definitions/balance'
+    type: object
+  coin:
+    enum:
+      - bitcoin
+      - testnet3
+      - litecoin
+      - ethereum
+      - bitcoin_private
+      - bitcoin_gold
+      - bitcoin_cash
+      - dash
+      - zcash
+      - zclassic
+  ethereum_to_sign:
+    properties:
+      hash_to_sign:
+        example: 955f74e31610aa78bf15d79ec4df4c36dc98e802f52002
+        type: string
+      tx:
+        example: >-
+          02000000011cd5d7621e2a7c9403e54e089cb0b5430b83ed13f1b897d3e319b100ba1b059b01000000db00483045022100d7534c80bc0a42addc3d955f74e31610aa78bf15d79ec4df4c36dc98e802f5200220369cab1bccb2dbca0921444ce3fafb15129fa0494d041998be104df39b8895ec01483045022100fe48c4c1d46e163acaff6b0d2e702812d20
+        type: string
+    type: object
+  hash_to_sign:
+    properties:
+      hash_to_sign:
+        example: 004cfaf7cff86e7f171db23d67acd6c986273e578d7466e43e2b78913e1ce7c7
+        type: string
+      input_index:
+        example: 0
+        type: integer
+      public_key:
+        example: 036f3972643ab052f9f77cbaf67f0e517180ac488453bde8cb27e9e3e1d6847d49
+        type: string
+    type: object
+  hashes_to_sign:
+    properties:
+      hashes:
+        items:
+          $ref: '#/definitions/hash_to_sign'
+        type: array
+      total_input_value:
+        example: 500000
+        type: integer
+      tx:
+        example: >-
+          02000000011cd5d7621e2a7c9403e54e089cb0b5430b83ed13f1b897d3e319b100ba1b059b01000000db00483045022100d7534c80bc0a42addc3d955f74e31610aa78bf15d79ec4df4c36dc98e802f5200220369cab1bccb2dbca0921444ce3fafb15129fa0494d041998be104df39b8895ec01483045022100fe48c4c1d46e163acaff6b0d2e702812d20
+        type: string
+    type: object
+  history:
+    properties:
+      total_txs:
+        example: 37000
+        type: integer
+      txs:
+        items:
+          $ref: '#/definitions/tx'
+        type: array
+    type: object
+  multi_sig_payment:
+    properties:
+      amount:
+        example: 100000
+        type: integer
+      fee_address:
+        example: 1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX
+        type: string
+      fee_amount:
+        example: 100000
+        type: integer
+      miners_fee:
+        example: 40000
+        type: integer
+      number_of_required_signatures:
+        example: 1
+        type: integer
+      redeem_scripts:
+        $ref: '#/definitions/redeem_script'
+      to:
+        example: 1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX
+        type: string
+    type: object
+  rate:
+    properties:
+      coin:
+        example: zcash
+        type: string
+      rate:
+        example: 0.004
+        type: number
+    type: object
+  rates:
+    properties:
+      rates:
+        $ref: '#/definitions/rate'
+    type: object
+  redeem_script:
+    properties:
+      public_key:
+        example: 036f3972643ab052f9f77cbaf67f0e517180ac488453bde8cb27e9e3e1d6847d49
+        type: string
+    type: object
+  send_status:
+    properties:
+      message:
+        example: 3bcf74e3421148db08daf6f5787a698534046bff54b2af1b8252b9166f8f4749
+        type: string
+      status_code:
+        example: 200
+        type: integer
+    type: object
+  signature:
+    properties:
+      hash_to_sign:
+        example: 7a77eb8e0e9e56ca925473cbfaa215822b1bc73de40dc9098d66b2eb785af9db
+        type: string
+      input_index:
+        example: 0
+        type: integer
+      public_key:
+        example: 036f3972643ab052f9f77cbaf67f0e517180ac488453bde8cb27e9e3e1d6847d49
+        type: string
+      signature:
+        example: >-
+          304402202915d9763c944918712155522ed99d1f01d7998c349316b5ba2d75ac41bb3dae022033b4d5800d2c5f461abf42a967625f77f4e16933bf9fa81aa753c423687eee02
+        type: string
+    type: object
+  signatures:
+    properties:
+      signatures:
+        items:
+          $ref: '#/definitions/signature'
+        type: array
+      tx:
+        type: string
+    type: object
+  tx:
+    properties:
+      address:
+        example: 1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY
+        type: string
+      amount:
+        example: 27018060
+        type: integer
+      confirmations:
+        example: 3
+        type: integer
+      human_amount:
+        example: 0.2701806
+        type: number
+      is_deposit:
+        type: boolean
+      time:
+        example: 1524579200
+        type: integer
+    type: object
+  utxo:
+    properties:
+      amount:
+        example: 395260
+        type: integer
+      script_pub_key:
+        example: 76a91404d075b3f501deeef5565143282b6cfe8fad5e9488ac
+        type: string
+      txid:
+        example: 9bd89c6555d42a2e0922f32f9227440def71ffc4e03ac6eda4c79ebbc0ceed1f
+        type: string
+      vout:
+        example: 1
+        type: integer
+    type: object
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-API-KEY
+    type: apiKey
+security:
+  - ApiKeyAuth: []
+x-components: {}
+
