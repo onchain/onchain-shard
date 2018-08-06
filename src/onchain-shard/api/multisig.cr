@@ -5,13 +5,13 @@ module OnChain
     class Multisig
 
       # /multi_sig/create/{coin} Create
-      def self.create(coin, multisigpayment : MultiSigPayment) : HashesToSign
+      def self.create(coin, multisigpayment : MultiSigPayment) : HashesToSign | ErrorMessage
 
         body = multisigpayment.to_json
 
         response = HTTP::Client.post "https://onchain.io/api/multi_sig/create/#{coin}/", body: body
 
-        raise "Error with API" if response.status_code != 200
+        return ErrorMessage.from_json response.body if response.status_code != 200
 
         hashestosign = HashesToSign.from_json response.body 
 
@@ -20,13 +20,13 @@ module OnChain
       end
 
       # /multi_sig/sign_and_send/{coin} Sign and send
-      def self.sign_and_send(coin, signatures : Signatures) : SendStatus
+      def self.sign_and_send(coin, signatures : Signatures) : SendStatus | ErrorMessage
 
         body = signatures.to_json
 
         response = HTTP::Client.post "https://onchain.io/api/multi_sig/sign_and_send/#{coin}/", body: body
 
-        raise "Error with API" if response.status_code != 200
+        return ErrorMessage.from_json response.body if response.status_code != 200
 
         sendstatus = SendStatus.from_json response.body 
 

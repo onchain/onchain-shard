@@ -227,22 +227,6 @@ components:
           example: 40000
         redeem_scripts:
           $ref: '#/components/schemas/redeem_script'
-    
-    rate:
-      type: object
-      properties:
-        coin:
-          type: string
-          example: zcash
-        rate:
-          type: number
-          example: 0.004
-    
-    rates:
-      type: object
-      properties:
-        rates:
-          $ref: '#/components/schemas/rate'
           
     send_status:
       type: object
@@ -253,6 +237,13 @@ components:
         message:
           type: string
           example: 3bcf74e3421148db08daf6f5787a698534046bff54b2af1b8252b9166f8f4749
+          
+    error_message:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Something went wrong.
     
 paths:
   /address/balance/{coin}/{address}:
@@ -290,6 +281,12 @@ paths:
       description: Returns the satoshi balance, usd balance and user viewable balance for an address. For ERC20 tokens you need to pass in the contract ID and the number of decimal places.
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: Returns the balances
           content:
             application/json:
@@ -331,6 +328,12 @@ paths:
       description: Returns the satoshi balance, usd balance and user viewable balance for a set of addresses
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: Returns the balances
           content:
             application/json:
@@ -372,6 +375,12 @@ paths:
       description: Returns the transaction history for an address or addresses.
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: Returns the transaction history for an address or addresses
           content:
             application/json:
@@ -401,6 +410,12 @@ paths:
       description: Returns the unspent outputs for an address or addresses.
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: Returns the unspent outputs for an address or addresses
           content:
             application/json:
@@ -465,6 +480,12 @@ paths:
       description: Create an unsigned transaction. OnChain returns the transaction for the specified coin in hex format along with a list of hashes that need to be signed. 
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: The unsigned transaction in hex format and a list of hashes that need signatures.
           content:
             application/json:
@@ -495,6 +516,12 @@ paths:
       description: Sign and send transaction onto the network.
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: Send a transaction onto the network.
           content:
             application/json:
@@ -524,6 +551,12 @@ paths:
       description: Send a transaction onto the network.
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: Send a transaction onto the network.
           content:
             application/json:
@@ -554,6 +587,12 @@ paths:
       description: Create an unsigned transaction. OnChain returns the transaction for the specified coin in hex format along with a list of hashes that need to be signed. 
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: The unsigned transaction in hex format and a list of hashes that need signatures.
           content:
             application/json:
@@ -584,6 +623,12 @@ paths:
       description: Sign and send transaction onto the network.
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: Send a transaction onto the network.
           content:
             application/json:
@@ -633,6 +678,12 @@ paths:
       description: Create an unsigned transaction. OnChain returns the ethereum transaction in hex format along with a hash that would need to be signed. 
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: The unsigned transaction in hex format and the hash to sign.
           content:
             application/json:
@@ -705,6 +756,12 @@ paths:
       description: Sign and send transaction onto the Ethereum network.
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: Send a transaction onto the network.
           content:
             application/json:
@@ -771,6 +828,12 @@ paths:
       description: Create an unsigned transaction. OnChain returns the ethereum transaction in hex format along with a hash that would need to be signed. 
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: The unsigned transaction in hex format and the hash to sign.
           content:
             application/json:
@@ -857,6 +920,12 @@ paths:
       description: Sign and send transaction onto the Ethereum network.
       responses:
         default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
           description: Send a transaction onto the network.
           content:
             application/json:

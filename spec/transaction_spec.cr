@@ -19,23 +19,30 @@ describe OnChain::API::Transaction do
       fee_addr,       # fee_address 
       400000.to_u64,  # fee_amount
       40000.to_u64)   # miners_fee 
+      
+    case hashes_to_sign
+    when OnChain::API::HashesToSign
     
-    hashes_to_sign.tx.size.should be > 10
-    
-    hashes_to_sign.hashes.size.should eq 1 
-    
-    sigs = Array(OnChain::API::Signature).new
-    
-    sigs << OnChain::API::Signature.new(hashes_to_sign.hashes[0].hash_to_sign, 
-      "This won't work",
-      hashes_to_sign.hashes[0].public_key,
-      hashes_to_sign.hashes[0].input_index)
-    
-    signatures = OnChain::API::Signatures.new(hashes_to_sign.tx, sigs)
-    
-    result = OnChain::API::Transaction.sign_and_send("testnet3", signatures)
-    
-    puts result
+      hashes_to_sign.tx.size.should be > 10
+      
+      hashes_to_sign.hashes.size.should eq 1 
+      
+      sigs = Array(OnChain::API::Signature).new
+      
+      sigs << OnChain::API::Signature.new(hashes_to_sign.hashes[0].hash_to_sign, 
+        "This won't work",
+        hashes_to_sign.hashes[0].public_key,
+        hashes_to_sign.hashes[0].input_index)
+      
+      signatures = OnChain::API::Signatures.new(hashes_to_sign.tx, sigs)
+      
+      result = OnChain::API::Transaction.sign_and_send("testnet3", signatures)
+      
+      puts result
+    else
+      # We shouldn't get here.
+      true.should eq(false)
+    end
   end
   
 end

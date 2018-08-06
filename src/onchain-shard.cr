@@ -1,15 +1,20 @@
 require "./onchain-shard/*"
 require "./onchain-shard/codegen/*"
 require "yaml"
+require "option_parser"
 
 module Onchain::Shard
   
-  yml_string = File.read("onchain.yml")
-  
-  yml = YAML.parse yml_string
+  if ARGV.size > 0
+    yml_string = File.read("onchain.yml")
     
-  ModelGenerator.generate_models(yml)
-  
-  APIGenerator.generate_api(yml)
+    yml = YAML.parse yml_string
+      
+    ModelGenerator.generate_models(yml)
+    
+    APIGenerator.generate_api(yml)
+  else
+    puts "Call with an argument to get code to generate. -- -g" 
+  end
   
 end

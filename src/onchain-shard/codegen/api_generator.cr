@@ -77,7 +77,7 @@ class APIGenerator
       
       model_name, is_array = return_type(params[i]["responses"])
       
-      clazz = clazz + ") : #{model_name}"
+      clazz = clazz + ") : #{model_name} | ErrorMessage"
       clazz = clazz + "\n\n"
       
       if is_post
@@ -86,7 +86,7 @@ class APIGenerator
         clazz = clazz + generate_get_call(path, params[i])
       end
       
-      clazz = clazz + "\n\n        raise \"Error with API\" if response.status_code != 200"
+      clazz = clazz + "\n\n        return ErrorMessage.from_json response.body if response.status_code != 200"
       
       clazz = clazz + "\n\n        #{model_name.downcase} = #{model_name}.from_json response.body \n"
       clazz = clazz + "\n\n        return #{model_name.downcase}\n"
@@ -121,11 +121,11 @@ class APIGenerator
   def self.return_type(response : YAML::Any)
   
     array = false
-    if response["default"]["content"]["application/json"]["schema"]["type"]? != nil
+    if response["200"]["content"]["application/json"]["schema"]["type"]? != nil
       array = true
-      model_name = response["default"]["content"]["application/json"]["schema"]["items"]["$ref"].to_s
+      model_name = response["200"]["content"]["application/json"]["schema"]["items"]["$ref"].to_s
     else
-      model_name = response["default"]["content"]["application/json"]["schema"]["$ref"].to_s
+      model_name = response["200"]["content"]["application/json"]["schema"]["$ref"].to_s
     end
     model_name = ref_to_model(model_name)
     
