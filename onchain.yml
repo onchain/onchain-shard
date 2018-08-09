@@ -49,6 +49,9 @@ components:
     extended_keys:
       type: object
       properties:
+        number_of_required_signatures:
+          type: integer
+          example: 2
         master_keys:
           items:
             $ref: '#/components/schemas/extended_key'
@@ -471,7 +474,7 @@ paths:
               $ref: "#/components/schemas/extended_keys"
       operationId: To Network Addresses
       summary: To Network Address
-      description: Convert xpub single and multisig paths to network addresses
+      description: Convert xpub single and multisig paths to network addresses. If the number of requires signatures is non zero then we will generate multi signature addresses.
       responses:
         default:
           description: If an error occurs
