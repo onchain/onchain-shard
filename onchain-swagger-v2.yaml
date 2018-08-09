@@ -34,10 +34,14 @@ paths:
           type: integer
           x-example: 18
       responses:
-        default:
+        '200':
           description: Returns the balances
           schema:
             $ref: '#/definitions/balance'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Address API
       description: >-
@@ -73,10 +77,14 @@ paths:
           type: integer
           x-example: 18
       responses:
-        default:
+        '200':
           description: Returns the balances
           schema:
             $ref: '#/definitions/balances'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Address API
       description: >-
@@ -111,15 +119,50 @@ paths:
           type: integer
           x-example: 18
       responses:
-        default:
+        '200':
           description: Returns the transaction history for an address or addresses
           schema:
             $ref: '#/definitions/history'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Address API
       description: Returns the transaction history for an address or addresses.
       operationId: Get History
       summary: Get History
+  /address/to_network_addresses:
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/extended_keys'
+      responses:
+        '200':
+          description: Returns the unspent outputs for an address or addresses
+          schema:
+            items:
+              $ref: '#/definitions/network_addresses'
+            type: array
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
+      tags:
+        - Address API
+      description: >-
+        Convert xpub single and multisig paths to network addresses. If the
+        number of requires signatures is non zero then we will generate multi
+        signature addresses.
+      operationId: To Network Addresses
+      summary: To Network Address
   '/address/utxo/{coin}/{addresses}':
     get:
       produces:
@@ -137,12 +180,16 @@ paths:
           required: true
           type: string
       responses:
-        default:
+        '200':
           description: Returns the unspent outputs for an address or addresses
           schema:
             items:
               $ref: '#/definitions/utxo'
             type: array
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Address API
       description: Returns the unspent outputs for an address or addresses.
@@ -194,10 +241,14 @@ paths:
           type: integer
           x-example: 10000
       responses:
-        default:
+        '200':
           description: The unsigned transaction in hex format and the hash to sign.
           schema:
             $ref: '#/definitions/ethereum_to_sign'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - ERC20
       description: >-
@@ -269,10 +320,14 @@ paths:
           type: integer
           x-example: 10000
       responses:
-        default:
+        '200':
           description: Send a transaction onto the network.
           schema:
             $ref: '#/definitions/send_status'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - ERC20
       description: Sign and send transaction onto the Ethereum network.
@@ -312,10 +367,14 @@ paths:
           type: integer
           x-example: 10000
       responses:
-        default:
+        '200':
           description: The unsigned transaction in hex format and the hash to sign.
           schema:
             $ref: '#/definitions/ethereum_to_sign'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Ethereum API
       description: >-
@@ -375,10 +434,14 @@ paths:
           type: integer
           x-example: 10000
       responses:
-        default:
+        '200':
           description: Send a transaction onto the network.
           schema:
             $ref: '#/definitions/send_status'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Ethereum API
       description: Sign and send transaction onto the Ethereum network.
@@ -402,12 +465,16 @@ paths:
           schema:
             $ref: '#/definitions/multi_sig_payment'
       responses:
-        default:
+        '200':
           description: >-
             The unsigned transaction in hex format and a list of hashes that
             need signatures.
           schema:
             $ref: '#/definitions/hashes_to_sign'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Multisig
       description: >-
@@ -435,10 +502,14 @@ paths:
           schema:
             $ref: '#/definitions/signatures'
       responses:
-        default:
+        '200':
           description: Send a transaction onto the network.
           schema:
             $ref: '#/definitions/send_status'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Multisig
       description: Sign and send transaction onto the network.
@@ -492,12 +563,16 @@ paths:
           type: integer
           x-example: 10000
       responses:
-        default:
+        '200':
           description: >-
             The unsigned transaction in hex format and a list of hashes that
             need signatures.
           schema:
             $ref: '#/definitions/hashes_to_sign'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Transaction API
       description: >-
@@ -523,10 +598,14 @@ paths:
           required: true
           type: string
       responses:
-        default:
+        '200':
           description: Send a transaction onto the network.
           schema:
             $ref: '#/definitions/send_status'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Transaction API
       description: Send a transaction onto the network.
@@ -551,10 +630,14 @@ paths:
           schema:
             $ref: '#/definitions/signatures'
       responses:
-        default:
+        '200':
           description: Send a transaction onto the network.
           schema:
             $ref: '#/definitions/send_status'
+        default:
+          description: If an error occurs
+          schema:
+            $ref: '#/definitions/error_message'
       tags:
         - Transaction API
       description: Sign and send transaction onto the network.
@@ -621,6 +704,12 @@ definitions:
       - dash
       - zcash
       - zclassic
+  error_message:
+    properties:
+      message:
+        example: Something went wrong.
+        type: string
+    type: object
   ethereum_to_sign:
     properties:
       hash_to_sign:
@@ -630,6 +719,26 @@ definitions:
         example: >-
           02000000011cd5d7621e2a7c9403e54e089cb0b5430b83ed13f1b897d3e319b100ba1b059b01000000db00483045022100d7534c80bc0a42addc3d955f74e31610aa78bf15d79ec4df4c36dc98e802f5200220369cab1bccb2dbca0921444ce3fafb15129fa0494d041998be104df39b8895ec01483045022100fe48c4c1d46e163acaff6b0d2e702812d20
         type: string
+    type: object
+  extended_key:
+    properties:
+      path:
+        example: m/0'/2
+        type: string
+      xpub:
+        example: >-
+          xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz
+        type: string
+    type: object
+  extended_keys:
+    properties:
+      master_keys:
+        items:
+          $ref: '#/definitions/extended_key'
+        type: array
+      number_of_required_signatures:
+        example: 2
+        type: integer
     type: object
   hash_to_sign:
     properties:
@@ -690,19 +799,19 @@ definitions:
         example: 1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX
         type: string
     type: object
-  rate:
+  network_address:
     properties:
       coin:
-        example: zcash
         type: string
-      rate:
-        example: 0.004
-        type: number
+      network_address:
+        type: string
     type: object
-  rates:
+  network_addresses:
     properties:
-      rates:
-        $ref: '#/definitions/rate'
+      addresses:
+        items:
+          $ref: '#/definitions/network_address'
+        type: array
     type: object
   redeem_script:
     properties:

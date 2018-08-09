@@ -23,8 +23,6 @@ describe OnChain::API::Transaction do
     case hashes_to_sign
     when OnChain::API::HashesToSign
     
-    puts hashes_to_sign
-    
       hashes_to_sign.tx.size.should be > 10
       
       hashes_to_sign.hashes.size.should eq 1 
@@ -41,8 +39,6 @@ describe OnChain::API::Transaction do
       signatures = OnChain::API::Signatures.new(hashes_to_sign.tx, sigs)
       
       result = OnChain::API::Transaction.sign_and_send("testnet3", signatures)
-      
-      puts result
     else
       # We shouldn't get here.
       true.should eq(false)

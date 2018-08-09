@@ -76,7 +76,7 @@ module OnChain
         return utxo
       end
 
-      # /address/to_network_addresses/ To Network Addresses
+      # /address/to_network_addresses To Network Addresses
       def self.to_network_addresses(extendedkeys : ExtendedKeys) : NetworkAddresses | ErrorMessage
 
         body = extendedkeys.to_json
@@ -86,7 +86,7 @@ module OnChain
           headers.add("X-API-KEY", ENV["ONCHAIN_API_KEY"])
         end
 
-        response = HTTP::Client.post "https://onchain.io/api/address/to_network_addresses//", headers: headers, body: body
+        response = HTTP::Client.post "https://onchain.io/api/address/to_network_addresses/", headers: headers, body: body
 
         return ErrorMessage.from_json response.body if response.status_code != 200
 

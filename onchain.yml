@@ -462,7 +462,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/utxo"
                   
-  /address/to_network_addresses/:
+  /address/to_network_addresses:
     post:
       tags:
         - Address API
