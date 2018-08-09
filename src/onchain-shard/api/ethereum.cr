@@ -7,7 +7,12 @@ module OnChain
       # /ethereum/create/ Create
       def self.create(to : String, from : String, amount : UInt64, gas_price : UInt64, gas_limit : UInt64) : EthereumToSign | ErrorMessage
 
-        response = HTTP::Client.post "https://onchain.io/api/ethereum/create//?to=#{to}&from=#{from}&amount=#{amount}&gas_price=#{gas_price}&gas_limit=#{gas_limit}"
+        headers = HTTP::Headers.new
+        if ENV["ONCHAIN_API_KEY"]? != nil
+          headers.add("X-API-KEY", ENV["ONCHAIN_API_KEY"])
+        end
+
+        response = HTTP::Client.post "https://onchain.io/api/ethereum/create//?to=#{to}&from=#{from}&amount=#{amount}&gas_price=#{gas_price}&gas_limit=#{gas_limit}", headers: headers
 
         return ErrorMessage.from_json response.body if response.status_code != 200
 
@@ -20,7 +25,12 @@ module OnChain
       # /ethereum/sign_and_send/ Sign and send
       def self.sign_and_send(to : String, from : String, amount : UInt64, r : String, s : String, v : String, gas_price : UInt64, gas_limit : UInt64) : SendStatus | ErrorMessage
 
-        response = HTTP::Client.post "https://onchain.io/api/ethereum/sign_and_send//?to=#{to}&from=#{from}&amount=#{amount}&r=#{r}&s=#{s}&v=#{v}&gas_price=#{gas_price}&gas_limit=#{gas_limit}"
+        headers = HTTP::Headers.new
+        if ENV["ONCHAIN_API_KEY"]? != nil
+          headers.add("X-API-KEY", ENV["ONCHAIN_API_KEY"])
+        end
+
+        response = HTTP::Client.post "https://onchain.io/api/ethereum/sign_and_send//?to=#{to}&from=#{from}&amount=#{amount}&r=#{r}&s=#{s}&v=#{v}&gas_price=#{gas_price}&gas_limit=#{gas_limit}", headers: headers
 
         return ErrorMessage.from_json response.body if response.status_code != 200
 

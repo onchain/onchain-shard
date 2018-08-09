@@ -11,6 +11,7 @@ describe OnChain::API::Address do
     when OnChain::API::Balance
       resp.human_balance.should be > 19.50874242
     else
+      puts resp.to_s
       true.should eq(false)
     end
   end

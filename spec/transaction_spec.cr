@@ -23,6 +23,8 @@ describe OnChain::API::Transaction do
     case hashes_to_sign
     when OnChain::API::HashesToSign
     
+    puts hashes_to_sign
+    
       hashes_to_sign.tx.size.should be > 10
       
       hashes_to_sign.hashes.size.should eq 1 
@@ -30,7 +32,9 @@ describe OnChain::API::Transaction do
       sigs = Array(OnChain::API::Signature).new
       
       sigs << OnChain::API::Signature.new(hashes_to_sign.hashes[0].hash_to_sign, 
-        "This won't work",
+        "3045022100f7c70d5678fb2322f6bce3c5d0ee2bd7a07435e22b4402aea75dc1e8f2" +
+        "d31f63022020562012d200e650c9df4d56060708c38c72ba6874f5fc3f9f88b19f6b" +
+        "434a70",
         hashes_to_sign.hashes[0].public_key,
         hashes_to_sign.hashes[0].input_index)
       

@@ -55,24 +55,29 @@ class APIGenerator
       
       clazz = clazz + "      def self.#{method_name}("
       
-      params[i]["parameters"].as_a.each do |param|
-      
-        if clazz[clazz.size - 1].to_s != "("
-          clazz = clazz + ", "
-        end
+      if params[i]["parameters"]? != nil
+        params[i]["parameters"].as_a.each do |param|
         
-        clazz = clazz + param["name"].to_s
-        if param["schema"]["type"]? != nil
-          clazz = clazz + " : "
-          clazz = clazz + ModelGenerator.convert_type( param["schema"]["type"].to_s)
+          if clazz[clazz.size - 1].to_s != "("
+            clazz = clazz + ", "
+          end
+          
+          clazz = clazz + param["name"].to_s
+          if param["schema"]["type"]? != nil
+            clazz = clazz + " : "
+            clazz = clazz + ModelGenerator.convert_type( param["schema"]["type"].to_s)
+          end
+          
         end
-        
       end
       
       # Add requestBody to parameters if we have one
       body_type = get_request_body_type(params[i])
       if body_type
-        clazz = clazz + ", #{body_type.downcase} : #{body_type}"
+        if clazz[clazz.size - 1].to_s != "("
+          clazz = clazz + ", "
+        end
+        clazz = clazz + "#{body_type.downcase} : #{body_type}"
       end
       
       model_name, is_array = return_type(params[i]["responses"])
@@ -141,6 +146,8 @@ class APIGenerator
     if body_type
       clazz = clazz + "        body = #{body_type.downcase}.to_json\n\n"
     end
+    
+    clazz = clazz + create_headers
   
     clazz = clazz + "        response = HTTP::Client.post \"https://onchain.io/api"
     path_we_need = path
@@ -149,36 +156,41 @@ class APIGenerator
       path_we_need = path[0..index - 2]
     end
     clazz = clazz + path_we_need
-    paramaters["parameters"].as_a.each do |param|
     
-      if param["in"].to_s == "path"
+    if paramaters["parameters"]? != nil
+      paramaters["parameters"].as_a.each do |param|
       
-        clazz = clazz + "/\#{" + param["name"].to_s + "}"
+        if param["in"].to_s == "path"
+        
+          clazz = clazz + "/\#{" + param["name"].to_s + "}"
+          
+        end
         
       end
-      
     end
     
     clazz = clazz + "/"
     
     first = true
-    paramaters["parameters"].as_a.each do |param|
-    
-      if param["in"].to_s == "query"
+    if paramaters["parameters"]? != nil
+      paramaters["parameters"].as_a.each do |param|
       
-        if first
-          clazz = clazz + "?" 
-        else
-          clazz = clazz + "&"
+        if param["in"].to_s == "query"
+        
+          if first
+            clazz = clazz + "?" 
+          else
+            clazz = clazz + "&"
+          end
+          first = false
+          clazz = clazz + param["name"].to_s + "=\#{" + param["name"].to_s + "}"
+          
         end
-        first = false
-        clazz = clazz + param["name"].to_s + "=\#{" + param["name"].to_s + "}"
         
       end
-      
     end
     
-    clazz = clazz + "\""
+    clazz = clazz + "\", headers: headers"
     
     if body_type
       clazz = clazz + ", body: body"
@@ -187,9 +199,20 @@ class APIGenerator
     return clazz
   end
   
+  def self.create_headers
+    s = "        headers = HTTP::Headers.new\n"
+    s = s + "        if ENV[\"ONCHAIN_API_KEY\"]? != nil\n"
+    s = s + "          headers.add(\"X-API-KEY\", ENV[\"ONCHAIN_API_KEY\"])\n"
+    s = s + "        end\n\n"
+    return s
+  end
+  
   def self.generate_get_call(path : String, paramaters : YAML::Any)
   
     clazz = ""
+    
+    clazz = clazz + create_headers
+    
     clazz = clazz + "        response = HTTP::Client.get \"https://onchain.io/api"
     path_we_need = path
     index = path.index("{")
@@ -226,7 +249,7 @@ class APIGenerator
       
     end
     
-    clazz = clazz + "\""
+    clazz = clazz + "\", headers: headers"
     
     return clazz
   end

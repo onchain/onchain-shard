@@ -9,7 +9,12 @@ module OnChain
 
         body = multisigpayment.to_json
 
-        response = HTTP::Client.post "https://onchain.io/api/multi_sig/create/#{coin}/", body: body
+        headers = HTTP::Headers.new
+        if ENV["ONCHAIN_API_KEY"]? != nil
+          headers.add("X-API-KEY", ENV["ONCHAIN_API_KEY"])
+        end
+
+        response = HTTP::Client.post "https://onchain.io/api/multi_sig/create/#{coin}/", headers: headers, body: body
 
         return ErrorMessage.from_json response.body if response.status_code != 200
 
@@ -24,7 +29,12 @@ module OnChain
 
         body = signatures.to_json
 
-        response = HTTP::Client.post "https://onchain.io/api/multi_sig/sign_and_send/#{coin}/", body: body
+        headers = HTTP::Headers.new
+        if ENV["ONCHAIN_API_KEY"]? != nil
+          headers.add("X-API-KEY", ENV["ONCHAIN_API_KEY"])
+        end
+
+        response = HTTP::Client.post "https://onchain.io/api/multi_sig/sign_and_send/#{coin}/", headers: headers, body: body
 
         return ErrorMessage.from_json response.body if response.status_code != 200
 

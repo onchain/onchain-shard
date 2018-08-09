@@ -34,7 +34,42 @@ components:
         - dash
         - zcash
         - zclassic
+        
+    extended_key:
+      type: object
+      properties:
+        xpub:
+          type: string
+          example: xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz
+        path:
+          type: string
+          example: 
+            m/0'/2
     
+    extended_keys:
+      type: object
+      properties:
+        master_keys:
+          items:
+            $ref: '#/components/schemas/extended_key'
+          type: array
+          
+    network_address:
+      type: object
+      properties:
+        network_address: 
+          type: string
+        coin:
+          type: string
+    
+    network_addresses:
+      type: object
+      properties:
+        addresses:
+          items:
+            $ref: '#/components/schemas/network_address'
+          type: array
+        
     balance:
       type: object
       properties:
@@ -423,6 +458,35 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/utxo"
+                  
+  /address/to_network_addresses/:
+    post:
+      tags:
+        - Address API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/extended_keys"
+      operationId: To Network Addresses
+      summary: To Network Address
+      description: Convert xpub single and multisig paths to network addresses
+      responses:
+        default:
+          description: If an error occurs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error_message"
+        '200':
+          description: Returns the unspent outputs for an address or addresses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/network_addresses"
                   
   /transaction/create/{coin}:
     post:
