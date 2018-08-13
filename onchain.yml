@@ -72,6 +72,11 @@ components:
           items:
             $ref: '#/components/schemas/network_address'
           type: array
+        public_keys:
+          type: array
+          items:
+            type: string
+            example: 0250863AD64A87AE8A2FE83C1AF1A8403CB53F53E486D8511DAD8A04887E5B2352
         
     balance:
       type: object

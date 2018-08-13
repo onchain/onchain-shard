@@ -27,7 +27,9 @@ class ModelGenerator
         the_type =value["type"].to_s
         # Is it an array
         if value["items"]? != nil
-          the_items = value["items"]["$ref"].to_s
+        
+          the_items = value["items"]["$ref"]? != nil ? 
+            value["items"]["$ref"].to_s : value["items"]["type"].to_s
           init_def = init_def +
             "        @#{key.to_s} : #{convert_type(the_type, the_items)},\n" 
         else
