@@ -7,11 +7,11 @@ module OnChain
     struct RedeemScript
     
       def initialize(
-        @public_key : String)
+        @public_keys : Array(String))
       end
     
       JSON.mapping(
-        public_key: String)
+        public_keys: Array(String))
       end
     
   end

@@ -243,9 +243,11 @@ components:
     redeem_script:
       type: object
       properties:
-        public_key:
-          type: string
-          example: 036f3972643ab052f9f77cbaf67f0e517180ac488453bde8cb27e9e3e1d6847d49
+        public_keys:
+          type: array
+          items:
+            type: string
+            example: 036f3972643ab052f9f77cbaf67f0e517180ac488453bde8cb27e9e3e1d6847d49
     
     multi_sig_payment:
       type: object
@@ -269,7 +271,9 @@ components:
           type: integer
           example: 40000
         redeem_scripts:
-          $ref: '#/components/schemas/redeem_script'
+          type: array
+          items:
+            $ref: '#/components/schemas/redeem_script'
           
     send_status:
       type: object

@@ -13,7 +13,7 @@ module OnChain
         @fee_amount : UInt64,
         @fee_address : String,
         @miners_fee : UInt64,
-        @redeem_scripts : RedeemScript)
+        @redeem_scripts : Array(RedeemScript))
       end
     
       JSON.mapping(
@@ -23,7 +23,7 @@ module OnChain
         fee_amount: UInt64,
         fee_address: String,
         miners_fee: UInt64,
-        redeem_scripts: RedeemScript)
+        redeem_scripts: Array(RedeemScript))
       end
     
   end
