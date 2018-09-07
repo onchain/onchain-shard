@@ -104,7 +104,7 @@ components:
           type: string
           example: "1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY"
         usd_balance:
-          type: integer
+          type: number
           example: 120.34
         balance:
           type: integer

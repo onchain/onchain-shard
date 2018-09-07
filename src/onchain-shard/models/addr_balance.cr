@@ -8,7 +8,7 @@ module OnChain
     
       def initialize(
         @address : String,
-        @usd_balance : UInt64,
+        @usd_balance : Float64,
         @balance : UInt64,
         @unconfirmed_balance : UInt64,
         @human_balance : Float64,
@@ -17,7 +17,7 @@ module OnChain
     
       JSON.mapping(
         address: String,
-        usd_balance: UInt64,
+        usd_balance: Float64,
         balance: UInt64,
         unconfirmed_balance: UInt64,
         human_balance: Float64,
