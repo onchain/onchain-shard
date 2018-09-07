@@ -5,14 +5,25 @@ module OnChain
     class Address
 
       # /address/balance/{coin}/{address} Get Balance
-      def self.get_balance(coin, address : String, contract_id : String, decimal_places : UInt64) : Balance | ErrorMessage
+      def self.get_balance(coin, address : String, contract_id : String? = nil, decimal_places : UInt64? = nil) : Balance | ErrorMessage
 
         headers = HTTP::Headers.new
         if ENV["ONCHAIN_API_KEY"]? != nil
           headers.add("X-API-KEY", ENV["ONCHAIN_API_KEY"])
         end
 
-        response = HTTP::Client.get "https://onchain.io/api/address/balance/#{coin}/#{address}/?contract_id=#{contract_id}&decimal_places=#{decimal_places}", headers: headers
+        url = "https://onchain.io/api/address/balance/#{coin}/#{address}/"
+
+        params = HTTP::Params.parse("")
+        params.add("contract_id", "#{contract_id}") if contract_id
+        params.add("decimal_places", "#{decimal_places}") if decimal_places
+
+
+        if params.size > 0
+          url += "?" + params.to_s
+        end
+
+        response = HTTP::Client.get url, headers: headers
 
         return ErrorMessage.from_json response.body if response.status_code != 200
 
@@ -23,14 +34,25 @@ module OnChain
       end
 
       # /address/balances/{coin}/{addresses} Get Balances
-      def self.get_balances(coin, addresses : String, contract_id : String, decimal_places : UInt64) : Balances | ErrorMessage
+      def self.get_balances(coin, addresses : String, contract_id : String? = nil, decimal_places : UInt64? = nil) : Balances | ErrorMessage
 
         headers = HTTP::Headers.new
         if ENV["ONCHAIN_API_KEY"]? != nil
           headers.add("X-API-KEY", ENV["ONCHAIN_API_KEY"])
         end
 
-        response = HTTP::Client.get "https://onchain.io/api/address/balances/#{coin}/#{addresses}/?contract_id=#{contract_id}&decimal_places=#{decimal_places}", headers: headers
+        url = "https://onchain.io/api/address/balances/#{coin}/#{addresses}/"
+
+        params = HTTP::Params.parse("")
+        params.add("contract_id", "#{contract_id}") if contract_id
+        params.add("decimal_places", "#{decimal_places}") if decimal_places
+
+
+        if params.size > 0
+          url += "?" + params.to_s
+        end
+
+        response = HTTP::Client.get url, headers: headers
 
         return ErrorMessage.from_json response.body if response.status_code != 200
 
@@ -41,14 +63,25 @@ module OnChain
       end
 
       # /address/history/{coin}/{addresses} Get History
-      def self.get_history(coin, addresses : String, contract_id : String, decimal_places : UInt64) : History | ErrorMessage
+      def self.get_history(coin, addresses : String, contract_id : String? = nil, decimal_places : UInt64? = nil) : History | ErrorMessage
 
         headers = HTTP::Headers.new
         if ENV["ONCHAIN_API_KEY"]? != nil
           headers.add("X-API-KEY", ENV["ONCHAIN_API_KEY"])
         end
 
-        response = HTTP::Client.get "https://onchain.io/api/address/history/#{coin}/#{addresses}/?contract_id=#{contract_id}&decimal_places=#{decimal_places}", headers: headers
+        url = "https://onchain.io/api/address/history/#{coin}/#{addresses}/"
+
+        params = HTTP::Params.parse("")
+        params.add("contract_id", "#{contract_id}") if contract_id
+        params.add("decimal_places", "#{decimal_places}") if decimal_places
+
+
+        if params.size > 0
+          url += "?" + params.to_s
+        end
+
+        response = HTTP::Client.get url, headers: headers
 
         return ErrorMessage.from_json response.body if response.status_code != 200
 
@@ -66,7 +99,16 @@ module OnChain
           headers.add("X-API-KEY", ENV["ONCHAIN_API_KEY"])
         end
 
-        response = HTTP::Client.get "https://onchain.io/api/address/utxo/#{coin}/#{addresses}/", headers: headers
+        url = "https://onchain.io/api/address/utxo/#{coin}/#{addresses}/"
+
+        params = HTTP::Params.parse("")
+
+
+        if params.size > 0
+          url += "?" + params.to_s
+        end
+
+        response = HTTP::Client.get url, headers: headers
 
         return ErrorMessage.from_json response.body if response.status_code != 200
 

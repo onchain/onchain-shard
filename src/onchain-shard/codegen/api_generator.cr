@@ -68,6 +68,11 @@ class APIGenerator
             clazz = clazz + ModelGenerator.convert_type( param["schema"]["type"].to_s)
           end
           
+          # Do we have optional parameters
+          if (param["required"]? != nil && param["required"] == "false") || param["required"]? == nil
+            clazz = clazz + "? = nil"
+          end
+          
         end
       end
       
@@ -213,7 +218,7 @@ class APIGenerator
     
     clazz = clazz + create_headers
     
-    clazz = clazz + "        response = HTTP::Client.get \"https://onchain.io/api"
+    clazz = clazz + "        url = \"https://onchain.io/api"
     path_we_need = path
     index = path.index("{")
     if index
@@ -231,25 +236,40 @@ class APIGenerator
     end
     
     clazz = clazz + "/"
+    clazz = clazz + "\"\n\n" # End of URL definition
     
-    first = true
+    clazz = clazz + "        params = HTTP::Params.parse(\"\")\n"
+    
     paramaters["parameters"].as_a.each do |param|
-    
-      if param["in"].to_s == "query"
-      
-        if first
-          clazz = clazz + "?" 
-        else
-          clazz = clazz + "&"
-        end
-        first = false
-        clazz = clazz + param["name"].to_s + "=\#{" + param["name"].to_s + "}"
-        
+      if (param["required"]? != nil && param["required"] == "false") || param["required"]? == nil
+        clazz = clazz + "        params.add(\"#{param["name"].to_s}\", \"\#{" + param["name"].to_s + "}\") if " + param["name"].to_s + "\n"
       end
-      
     end
     
-    clazz = clazz + "\", headers: headers"
+    
+    clazz = clazz + "\n\n        if params.size > 0\n"
+    clazz = clazz + "          url += \"?\" + params.to_s\n"
+    clazz = clazz + "        end\n\n"
+    
+    
+    #first = true
+    #paramaters["parameters"].as_a.each do |param|
+    #
+    #  if param["in"].to_s == "query"
+    #  
+    #    if first
+    #      clazz = clazz + "?" 
+    #    else
+    #      clazz = clazz + "&"
+    #    end
+    #    first = false
+    #    clazz = clazz + param["name"].to_s + "=\#{" + param["name"].to_s + "}"
+    #    
+    #  end
+    #  
+    #end
+    
+    clazz = clazz + "        response = HTTP::Client.get url, headers: headers"
     
     return clazz
   end

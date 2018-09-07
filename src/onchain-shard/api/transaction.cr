@@ -5,7 +5,7 @@ module OnChain
     class Transaction
 
       # /transaction/create/{coin} Create
-      def self.create(coin, to : String, from : String, amount : UInt64, fee_address : String, fee_amount : UInt64, miners_fee : UInt64) : HashesToSign | ErrorMessage
+      def self.create(coin, to : String, from : String, amount : UInt64, fee_address : String? = nil, fee_amount : UInt64? = nil, miners_fee : UInt64? = nil) : HashesToSign | ErrorMessage
 
         headers = HTTP::Headers.new
         if ENV["ONCHAIN_API_KEY"]? != nil

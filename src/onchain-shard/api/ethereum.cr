@@ -5,7 +5,7 @@ module OnChain
     class Ethereum
 
       # /ethereum/create/ Create
-      def self.create(to : String, from : String, amount : UInt64, gas_price : UInt64, gas_limit : UInt64) : EthereumToSign | ErrorMessage
+      def self.create(to : String, from : String, amount : UInt64, gas_price : UInt64? = nil, gas_limit : UInt64? = nil) : EthereumToSign | ErrorMessage
 
         headers = HTTP::Headers.new
         if ENV["ONCHAIN_API_KEY"]? != nil
@@ -23,7 +23,7 @@ module OnChain
       end
 
       # /ethereum/sign_and_send/ Sign and send
-      def self.sign_and_send(to : String, from : String, amount : UInt64, r : String, s : String, v : String, gas_price : UInt64, gas_limit : UInt64) : SendStatus | ErrorMessage
+      def self.sign_and_send(to : String, from : String, amount : UInt64, r : String, s : String, v : String, gas_price : UInt64? = nil, gas_limit : UInt64? = nil) : SendStatus | ErrorMessage
 
         headers = HTTP::Headers.new
         if ENV["ONCHAIN_API_KEY"]? != nil
