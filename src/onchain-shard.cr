@@ -1,5 +1,4 @@
-require "./onchain-shard/*"
-require "./onchain-shard/codegen/*"
+require "./onchain-shard/**"
 require "yaml"
 require "option_parser"
 
