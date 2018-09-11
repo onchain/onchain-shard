@@ -663,7 +663,7 @@ definitions:
         type: integer
       usd_balance:
         example: 120.34
-        type: integer
+        type: number
     type: object
   balance:
     properties:
@@ -794,7 +794,9 @@ definitions:
         example: 1
         type: integer
       redeem_scripts:
-        $ref: '#/definitions/redeem_script'
+        items:
+          $ref: '#/definitions/redeem_script'
+        type: array
       to:
         example: 1F1tAaz5x1HUXrCNLbtMDqcw6o5GNn4xqX
         type: string
@@ -812,12 +814,19 @@ definitions:
         items:
           $ref: '#/definitions/network_address'
         type: array
+      public_keys:
+        items:
+          example: 0250863AD64A87AE8A2FE83C1AF1A8403CB53F53E486D8511DAD8A04887E5B2352
+          type: string
+        type: array
     type: object
   redeem_script:
     properties:
-      public_key:
-        example: 036f3972643ab052f9f77cbaf67f0e517180ac488453bde8cb27e9e3e1d6847d49
-        type: string
+      public_keys:
+        items:
+          example: 036f3972643ab052f9f77cbaf67f0e517180ac488453bde8cb27e9e3e1d6847d49
+          type: string
+        type: array
     type: object
   send_status:
     properties:
