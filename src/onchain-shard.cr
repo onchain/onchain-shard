@@ -4,7 +4,7 @@ require "option_parser"
 
 module Onchain::Shard
   
-  if ARGV.size > 0
+  if ARGV.size > 0 && ARGV[0] == "-g"
     yml_string = File.read("onchain.yml")
     
     yml = YAML.parse yml_string
