@@ -91,15 +91,15 @@ module OnChain
         return history
       end
 
-      # /address/utxo/{coin}/{addresses} Get Unspent
-      def self.get_unspent(coin, addresses : String) : Utxo | ErrorMessage
+      # /address/utxos/{coin}/{addresses} Get Unspent
+      def self.get_unspent(coin, addresses : String) : Utxos | ErrorMessage
 
         headers = HTTP::Headers.new
         if ENV["ONCHAIN_API_KEY"]? != nil
           headers.add("X-API-KEY", ENV["ONCHAIN_API_KEY"])
         end
 
-        url = "https://onchain.io/api/address/utxo/#{coin}/#{addresses}/"
+        url = "https://onchain.io/api/address/utxos/#{coin}/#{addresses}/"
 
         params = HTTP::Params.parse("")
 
@@ -112,10 +112,10 @@ module OnChain
 
         return ErrorMessage.from_json response.body if response.status_code != 200
 
-        utxo = Utxo.from_json response.body 
+        utxos = Utxos.from_json response.body 
 
 
-        return utxo
+        return utxos
       end
 
       # /address/to_network_addresses To Network Addresses

@@ -2,6 +2,21 @@ require "./spec_helper"
 
 describe OnChain::API::Address do
 
+  it "should retrieve get unspent outs" do
+  
+    utxos = OnChain::API::Address.get_unspent("testnet3", 
+      "2MsdUncnHhkjTm8AZ3dcdN2B9WkTgf6EyfE")
+    
+    case utxos
+    when OnChain::API::Utxos
+      utxos.utxos.size.should be > 0
+    else
+      puts utxos.to_s
+      true.should eq(false)
+    end
+    
+  end
+
   it "should retrieve a bitcoin balance" do
   
     resp = OnChain::API::Address.get_balance("bitcoin", 

@@ -165,6 +165,14 @@ components:
         script_pub_key:
           type: string
           example: 76a91404d075b3f501deeef5565143282b6cfe8fad5e9488ac
+            
+    utxos:
+      type: object
+      properties:
+        utxos:
+          type: array
+          items:
+            $ref: '#/components/schemas/utxo'
           
     history:
       type: object
@@ -434,7 +442,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/history"
                   
-  /address/utxo/{coin}/{addresses}:
+  /address/utxos/{coin}/{addresses}:
     get:
       tags:
         - Address API
@@ -467,9 +475,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/utxo"
+                $ref: "#/components/schemas/utxos"
                   
   /address/to_network_addresses:
     post:
