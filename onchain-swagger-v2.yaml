@@ -163,7 +163,7 @@ paths:
         signature addresses.
       operationId: To Network Addresses
       summary: To Network Address
-  '/address/utxo/{coin}/{addresses}':
+  '/address/utxos/{coin}/{addresses}':
     get:
       produces:
         - application/json
@@ -183,9 +183,7 @@ paths:
         '200':
           description: Returns the unspent outputs for an address or addresses
           schema:
-            items:
-              $ref: '#/definitions/utxo'
-            type: array
+            $ref: '#/definitions/utxos'
         default:
           description: If an error occurs
           schema:
@@ -896,6 +894,13 @@ definitions:
       vout:
         example: 1
         type: integer
+    type: object
+  utxos:
+    properties:
+      utxos:
+        items:
+          $ref: '#/definitions/utxo'
+        type: array
     type: object
 securityDefinitions:
   ApiKeyAuth:
