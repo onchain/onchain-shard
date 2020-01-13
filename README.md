@@ -1,10 +1,10 @@
 # onchain-shard
 
-TODO: Write a description here
+Crystal client for onchain generated from the swagger/open-api definition.
 
 ## Installation
 
-TODO: Write installation instructions here
+Add onchain-shard to your shards.yml
 
 ## Usage
 
@@ -12,16 +12,10 @@ TODO: Write usage instructions here
 
 ## Development
 
-./sentry -w "./src/**/*.cr" -r "crystal" --run-args "src/onchain-shard.cr"
+Get latest onchain.yml swagger file.
 
-## Contributing
+`docker run -v %cd%:/src ianpurton/crystal-openapi-codegen:latest /src/onchain.yml /src/`
 
-1. Fork it (<https://github.com/your-github-user/onchain-shard/fork>)
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+## Run the tests
 
-## Contributors
-
-- [your-github-user](https://github.com/your-github-user) John Doe - creator, maintainer
+export ONCHAIN_API_KEY=YOUR_KEY && crytal spec
